@@ -1,0 +1,49 @@
+
+- Quitar opciones developer
+	OK !!!
+
+- Limitar netconn ¿con net dummy?
+
+- Quitar mil y una opciones fijas y/o absurdas.
+	cvar_t's en gl_rmain.c
+
+- Son necesarias tantas variables definidas??
+
+- Aglutinar codigo como DreamPlaces
+	OK ???
+
+- Solo un mismo GAMEMODE y DIRs
+
+- No SOUND !
+	OK !!!
+
+- Remodelar menu: codigo y ficheros pk?
+
+- Quitar conexiones de menu con net dummy
+
+- Completar DEBUG_GL para diferentes frames
+
+- Reducir drasticamente la memoria reservada!!
+	Los mapas ocupan una barbaridad, MMU???
+
+- Quitar Video Stereo
+	OK !!!
+
+- Desactivar modo DEMO
+	OK !!!
+
+- Pasar doubles a floats como _mq1_frontpoints
+	Parcialemente con dr_real_t
+	PROBLEMAS VARIOS CON -DNO_DOUBLE
+
+- Cambiar NO_LIGHTDATA como LIGHTSIMPLE
+	REVISAR!!!
+
+- Buscar todos los MAX para acortar
+	Crash en E4M2 !!!
+	Mirar REDUCE_DIVISOR_MODELS y MAX_MOD_KNOWN
+
+- Compilar SDL con -Os cuando es GL
+	¿ Y porque no todo el engine ?
+
+

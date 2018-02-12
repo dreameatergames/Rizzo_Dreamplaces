@@ -1,0 +1,168 @@
+TARGET = dreamplaces
+
+KOS_CFLAGS+= -I$(KOS_BASE)/addons/include/SDL -I$(KOS_BASE)/addons/include -Isrc -DDREAMCAST
+
+KOS_CFLAGS+= -O3 -ffast-math -fno-common -fno-builtin -fno-exceptions -fstrict-aliasing -DDATA_PREFIX="/cd/" -DBYTE_ORDER=LITTLE_ENDIAN -DLITTLE_ENDIAN=1234 -DBIG_ENDIAN=4321
+
+KOS_CFLAGS += -DREDUCE_MEMORY
+KOS_CFLAGS += -DNO_Q3SHADERS
+KOS_CFLAGS += -DNO_SND_OGG
+KOS_CFLAGS += -DNO_LIBCURL
+KOS_CFLAGS += -DNO_ZLIB
+KOS_CFLAGS += -DNO_LIBPNG
+KOS_CFLAGS += -DNO_JPEG
+KOS_CFLAGS += -DNO_CAPTURE_VIDEO -DNO_SCREENSHOT
+KOS_CFLAGS += -DNO_GLEXTENSIONS
+KOS_CFLAGS += -DNO_DEVELOPER
+KOS_CFLAGS += -DNO_DLLS
+KOS_CFLAGS += -DNO_NET
+KOS_CFLAGS += -DNO_SOUND
+KOS_CFLAGS += -DNO_DEMO
+KOS_CFLAGS += -DNO_GAMEMODE
+KOS_CFLAGS += -DNO_DOUBLE
+KOS_CFLAGS += -DNO_DEFORMED
+KOS_CFLAGS += -DVIEW_SIMPLE
+KOS_CFLAGS += -DNO_FOG
+KOS_CFLAGS += -DNO_ST_VECTORS
+KOS_CFLAGS += -DSIMPLE_LIGHTS
+KOS_CFLAGS += -DNO_VIDEOSTEREO
+#KOS_CFLAGS += -DONE_PORTAL_PASS
+#KOS_CFLAGS += -DBATCH0
+KOS_CFLAGS += -DFIXED_OPENGL
+
+KOS_CFLAGS += -DNO_CONSOLE
+
+#KOS_CFLAGS += -DDEBUG_GL
+#KOS_CFLAGS += -DDEBUG_GL_NO_TODO
+
+#KOS_CFLAGS += -DDEBUG_DREAMPLACES
+#KOS_CFLAGS += -DDEBUG_DREAMPLACES_FFLUSH
+#KOS_CFLAGS += -DSTART_DEBUG=100
+#KOS_CFLAGS += -DDEBUG_NET
+
+#KOS_CFLAGS += -DMAX_AUTOEVENTS=130
+
+#KOS_CFLAGS += -DPROFILER_DREAMPLACES
+#KOS_CFLAGS += -DRESET_PROFILER=70
+
+
+KOS_CPPFLAGS=-fno-operator-names -fno-exceptions $(KOS_CFLAGS)
+
+all: $(TARGET).bin
+
+include $(KOS_BASE)/Makefile.rules
+
+
+OBJS =	\
+	src/main.o \
+	src/net_null.o \
+	src/lhnet.o \
+	src/cd_shared.o \
+	src/cd_sdl.o \
+	src/builddate.o \
+	src/vid_sdl.o \
+	src/snd_main.o \
+	src/snd_mem.o \
+	src/snd_mix.o \
+	src/snd_ogg.o \
+	src/snd_wav.o \
+	src/snd_sdl.o \
+	src/cl_collision.o \
+	src/cl_demo.o \
+	src/cl_input.o \
+	src/cl_main.o \
+	src/cl_parse.o \
+	src/cl_particles.o \
+	src/cl_screen.o \
+	src/cl_video.o \
+	src/clvm_cmds.o \
+	src/debug_gl.o \
+	src/cmd.o \
+	src/collision.o \
+	src/common.o \
+	src/console.o \
+	src/csprogs.o \
+	src/curves.o \
+	src/cvar.o \
+	src/dpvsimpledecode.o \
+	src/filematch.o \
+	src/fractalnoise.o \
+	src/fs.o \
+	src/gl_backend.o \
+	src/gl_draw.o \
+	src/gl_rmain.o \
+	src/gl_rsurf.o \
+	src/gl_textures.o \
+	src/host.o \
+	src/host_cmd.o \
+	src/image.o \
+	src/image_png.o \
+	src/jpeg.o \
+	src/keys.o \
+	src/libcurl.o \
+	src/mathlib.o \
+	src/matrixlib.o \
+	src/mdfour.o \
+	src/menu.o \
+	src/meshqueue.o \
+	src/model_alias.o \
+	src/model_brush.o \
+	src/model_shared.o \
+	src/model_sprite.o \
+	src/mvm_cmds.o \
+	src/netconn.o \
+	src/palette.o \
+	src/polygon.o \
+	src/portals.o \
+	src/protocol.o \
+	src/prvm_cmds.o \
+	src/prvm_edict.o \
+	src/prvm_exec.o \
+	src/r_explosion.o \
+	src/r_lerpanim.o \
+	src/r_light.o \
+	src/r_lightning.o \
+	src/r_modules.o \
+	src/r_shadow.o \
+	src/r_sky.o \
+	src/r_sprites.o \
+	src/sbar.o \
+	src/sv_main.o \
+	src/sv_move.o \
+	src/sv_phys.o \
+	src/sv_user.o \
+	src/svbsp.o \
+	src/svvm_cmds.o \
+	src/vid_shared.o \
+	src/view.o \
+	src/wad.o \
+	src/world.o \
+	src/zone.o
+
+clean:
+	rm -f $(OBJS) $(TARGET).elf $(TARGET).bin  romdisk.o romdisk.img example.iso
+
+$(TARGET).elf: $(OBJS)
+	$(KOS_CC) $(KOS_CFLAGS) $(KOS_LDFLAGS) -o $(TARGET).elf $(KOS_START) \
+	$(OBJS) $(OBJEXTRA) -lSDL_gl_129 -lkglx -lm $(KOS_LIBS)
+
+$(TARGET).bin: $(TARGET).elf
+	$(KOS_OBJCOPY) -R .stack -O binary $(TARGET).elf $(TARGET).bin
+
+romdisk.o: romdisk.img
+	$(KOS_BASE)/utils/bin2o/bin2o romdisk.img romdisk romdisk.o
+#	bin2odc romdisk.img romdisk.o
+
+romdisk.img: data
+	$(KOS_GENROMFS) -f romdisk.img -d data -v
+
+example.iso: example
+	mkisofs -l -o example.iso -graft-points /=example/
+
+
+#run: $(TARGET).bin example.iso
+#	$(KOS_LOADER) $(TARGET).bin -i example.iso
+
+run: $(TARGET).bin
+	$(KOS_LOADER) $(TARGET).bin
+

@@ -1,0 +1,165 @@
+NAME   = dreamplaces
+O      = o
+RM     = rm -f
+CC     = gcc
+CXX    = g++
+STRIP  = strip
+
+PROG   = $(NAME)
+
+DEFAULT_CFLAGS = `sdl-config --cflags` -I/usr/local/include 
+LDFLAGS        = `sdl-config --libs` -lSDL_mixer -lSDL_image 
+
+MORE_CFLAGS = -Di686 -O3 -ffast-math -fno-common -fno-builtin -fno-exceptions -fstrict-aliasing -O3 -march=i686 -DDATA_PREFIX=\"./data/\"
+
+MORE_CFLAGS += -DREDUCE_MEMORY
+MORE_CFLAGS += -DNO_Q3SHADERS
+MORE_CFLAGS += -DNO_SND_OGG
+MORE_CFLAGS += -DNO_LIBCURL
+MORE_CFLAGS += -DNO_ZLIB
+MORE_CFLAGS += -DNO_LIBPNG
+MORE_CFLAGS += -DNO_JPEG
+MORE_CFLAGS += -DNO_CAPTURE_VIDEO -DNO_SCREENSHOT
+MORE_CFLAGS += -DNO_GLEXTENSIONS
+MORE_CFLAGS += -DNO_DEVELOPER
+MORE_CFLAGS += -DNO_DLLS
+MORE_CFLAGS += -DNO_NET
+MORE_CFLAGS += -DNO_SOUND
+MORE_CFLAGS += -DNO_DEMO
+MORE_CFLAGS += -DNO_GAMEMODE
+#MORE_CFLAGS += -DNO_DOUBLE
+MORE_CFLAGS += -DNO_DEFORMED
+MORE_CFLAGS += -DVIEW_SIMPLE
+MORE_CFLAGS += -DNO_FOG
+MORE_CFLAGS += -DNO_ST_VECTORS
+MORE_CFLAGS += -DSIMPLE_LIGHTS
+MORE_CFLAGS += -DNO_VIDEOSTEREO
+#MORE_CFLAGS += -DONE_PORTAL_PASS
+
+#MORE_CFLAGS += -DMAX_MOD_KNOWN=128
+#MORE_CFLAGS += -DBATCH0
+
+#MORE_CFLAGS += -DNO_CONSOLE
+
+#MORE_CFLAGS += -DDEBUG_GL
+#MORE_CFLAGS += -DDEBUG_GL_NO_TODO
+
+MORE_CFLAGS += -DDEBUG_DREAMPLACES
+MORE_CFLAGS += -DDEBUG_DREAMPLACES_FFLUSH
+MORE_CFLAGS += -DSTART_DEBUG=0
+MORE_CFLAGS += -DDEBUG_NET
+
+
+#MORE_CFLAGS += -DMAX_AUTOEVENTS=2000
+
+#MORE_CFLAGS += -DPROFILER_DREAMPLACES
+#MORE_CFLAGS += -DRESET_PROFILER=300
+
+MORE_CFLAGS += -DMEM_STATS
+
+CFLAGS  = $(DEFAULT_CFLAGS) $(MORE_CFLAGS) -Isrc
+CPPFLAGS  = $(CFLAGS)
+
+all: $(PROG)
+
+
+
+OBJS =	\
+	src/main.o \
+	src/net_null.o \
+	src/lhnet.o \
+	src/cd_shared.o \
+	src/cd_sdl.o \
+	src/builddate.o \
+	src/vid_sdl.o \
+	src/snd_main.o \
+	src/snd_mem.o \
+	src/snd_mix.o \
+	src/snd_ogg.o \
+	src/snd_wav.o \
+	src/snd_sdl.o \
+	src/cl_collision.o \
+	src/cl_demo.o \
+	src/cl_input.o \
+	src/cl_main.o \
+	src/cl_parse.o \
+	src/cl_particles.o \
+	src/cl_screen.o \
+	src/cl_video.o \
+	src/clvm_cmds.o \
+	src/debug_gl.o \
+	src/cmd.o \
+	src/collision.o \
+	src/common.o \
+	src/console.o \
+	src/csprogs.o \
+	src/curves.o \
+	src/cvar.o \
+	src/dpvsimpledecode.o \
+	src/filematch.o \
+	src/fractalnoise.o \
+	src/fs.o \
+	src/gl_backend.o \
+	src/gl_draw.o \
+	src/gl_rmain.o \
+	src/gl_rsurf.o \
+	src/gl_textures.o \
+	src/host.o \
+	src/host_cmd.o \
+	src/image.o \
+	src/image_png.o \
+	src/jpeg.o \
+	src/keys.o \
+	src/libcurl.o \
+	src/mathlib.o \
+	src/matrixlib.o \
+	src/mdfour.o \
+	src/menu.o \
+	src/meshqueue.o \
+	src/model_alias.o \
+	src/model_brush.o \
+	src/model_shared.o \
+	src/model_sprite.o \
+	src/mvm_cmds.o \
+	src/netconn.o \
+	src/palette.o \
+	src/polygon.o \
+	src/portals.o \
+	src/protocol.o \
+	src/prvm_cmds.o \
+	src/prvm_edict.o \
+	src/prvm_exec.o \
+	src/r_explosion.o \
+	src/r_lerpanim.o \
+	src/r_light.o \
+	src/r_lightning.o \
+	src/r_modules.o \
+	src/r_shadow.o \
+	src/r_sky.o \
+	src/r_sprites.o \
+	src/sbar.o \
+	src/sv_main.o \
+	src/sv_move.o \
+	src/sv_phys.o \
+	src/sv_user.o \
+	src/svbsp.o \
+	src/svvm_cmds.o \
+	src/vid_shared.o \
+	src/view.o \
+	src/wad.o \
+	src/world.o \
+	src/zone.o
+
+
+$(PROG): $(OBJS)
+	$(CC) -L/usr/lib/mingw -L/usr/local/lib -L/usr/lib/w32api/ -L/usr/X11R6/lib -lglu32 -lopengl32 -o $(PROG) -lmingw32 $(OBJS) -lopengl32 -lSDL_static_129 -lGL -mwindows -mno-cygwin -luser32 -lgdi32 -lwinmm -ldxguid -lcomctl32 -lwsock32
+	$(STRIP) $(PROG).exe
+
+run: $(PROG)
+	./$(PROG) -basedir example -particles 256 -bpp 16 -window +snd_streaming 0 +snd_speed 22050 +gl_max_size 128 +gl_picmip 2 +r_lightmaprgba 0 +snd_precache 0 +r_precachetextures 2 +scr_screenshot_jpeg 0 -notexture3d +r_mipsprites 0 +r_mipskins 0 +gl_texturemode GL_LINEAR -nosound +changelevel "start"
+
+#	-prydon
+
+clean:
+	$(RM) $(PROG).exe $(OBJS) stdout.txt stderr.txt
+
